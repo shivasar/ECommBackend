@@ -10,6 +10,8 @@ const db_config = require("./configs/db.config")
 const bcrypt = require("bcryptjs")
 const user_model= require("./models/user.model.js")
 
+//postman sends json but node.js only understans js so we need to convert json in js object
+app.use(express.json())//middleware
 /**
  * Create an admin user at starting of applicstion
  * if not already present
@@ -28,6 +30,8 @@ db.once("open",()=>{
     init()
 })
 
+
+
 async function init(){
 
     try{
@@ -45,9 +49,10 @@ async function init(){
         user = await user_model.create({
             name: "Shivani",
             userId:"admin",
+            password: bcrypt.hashSync("Welcome",8),
             email:"shivaniprasar@gmail.com",
-            userType:"ADMIN",
-            password: bcrypt.hashSync("Welcome",8)
+            userType:"ADMIN"
+           
         })
         console.log("Admin Created",user)
 
@@ -56,6 +61,10 @@ async function init(){
     }
     
 }
+/**
+ * stich the route to the server
+ */
+require("./routes/auth.route")(app)
 
 /**
  * Start the Server
